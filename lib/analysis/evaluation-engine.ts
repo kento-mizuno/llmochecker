@@ -69,7 +69,7 @@ export class EvaluationEngine {
       /写真|画像|スクリーンショット|動画/
     ]
 
-    const htmlLower = html.toLowerCase()
+    // const htmlLower = html.toLowerCase() // 将来の拡張用
     let matchedPatterns = 0
 
     experiencePatterns.forEach(pattern => {

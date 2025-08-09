@@ -15,15 +15,20 @@ import { GeminiPrompts } from './gemini-prompts'
 export class GeminiAnalyzer {
   private genAI: GoogleGenerativeAI
   private config: GeminiConfig
-  private model: any
+  private model: any // eslint-disable-line @typescript-eslint/no-explicit-any
 
   constructor(config: GeminiConfig) {
-    this.config = {
-      model: 'gemini-2.0-flash-exp',
+    // デフォルト設定
+    const defaultConfig = {
       maxTokens: 8192,
       temperature: 0.1,
       topP: 0.8,
       topK: 40,
+      model: 'gemini-2.0-flash-exp'
+    }
+    
+    this.config = {
+      ...defaultConfig,
       ...config
     }
     
@@ -180,32 +185,38 @@ export class GeminiAnalyzer {
       if (!jsonMatch) throw new Error('JSON形式が見つかりません')
       
       const jsonStr = jsonMatch[1] || jsonMatch[0]
-      const parsed = JSON.parse(jsonStr)
+      const parsed = JSON.parse(jsonStr) as Record<string, unknown>
       
+      const exp = parsed.experience as Record<string, unknown> || {}
+      const exp2 = parsed.expertise as Record<string, unknown> || {}
+      const auth = parsed.authoritativeness as Record<string, unknown> || {}
+      const trust = parsed.trustworthiness as Record<string, unknown> || {}
+      const overall = parsed.overall as Record<string, unknown> || {}
+
       return {
         experience: {
-          score: parsed.experience?.score || 50,
-          evidence: parsed.experience?.evidence || [],
-          issues: parsed.experience?.issues || []
+          score: (exp.score as number) || 50,
+          evidence: (exp.evidence as string[]) || [],
+          issues: (exp.issues as string[]) || []
         },
         expertise: {
-          score: parsed.expertise?.score || 50,
-          evidence: parsed.expertise?.evidence || [],
-          issues: parsed.expertise?.issues || []
+          score: (exp2.score as number) || 50,
+          evidence: (exp2.evidence as string[]) || [],
+          issues: (exp2.issues as string[]) || []
         },
         authoritativeness: {
-          score: parsed.authoritativeness?.score || 50,
-          evidence: parsed.authoritativeness?.evidence || [],
-          issues: parsed.authoritativeness?.issues || []
+          score: (auth.score as number) || 50,
+          evidence: (auth.evidence as string[]) || [],
+          issues: (auth.issues as string[]) || []
         },
         trustworthiness: {
-          score: parsed.trustworthiness?.score || 50,
-          evidence: parsed.trustworthiness?.evidence || [],
-          issues: parsed.trustworthiness?.issues || []
+          score: (trust.score as number) || 50,
+          evidence: (trust.evidence as string[]) || [],
+          issues: (trust.issues as string[]) || []
         },
         overall: {
-          score: parsed.overall?.score || 50,
-          assessment: parsed.overall?.assessment || 'AI分析により評価されました'
+          score: (overall.score as number) || 50,
+          assessment: (overall.assessment as string) || 'AI分析により評価されました'
         }
       }
     } catch (error) {

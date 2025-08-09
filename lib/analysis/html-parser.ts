@@ -104,7 +104,8 @@ export class HtmlParser {
     // 各レベルの見出し数をカウント
     for (let i = 1; i <= 6; i++) {
       const count = $(`h${i}`).length
-      structure[`h${i}` as keyof HeadingStructure] = count
+      const key = `h${i}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+      structure[key] = count
     }
 
     // 見出し階層構造を取得

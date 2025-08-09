@@ -3,7 +3,13 @@ import { WebCrawler } from './web-crawler'
 import { HtmlParser } from './html-parser'
 import { EvaluationEngine } from './evaluation-engine'
 import { GeminiAnalyzer } from './gemini-analyzer'
-import { AnalysisResult, CrawlOptions, GeminiAnalysisRequest, GeminiAnalysisResponse } from '@/types/analysis'
+import { 
+  AnalysisResult, 
+  CrawlOptions, 
+  GeminiAnalysisRequest, 
+  GeminiAnalysisResponse,
+  EvaluationResult
+} from '@/types/analysis'
 
 /**
  * URL分析・評価エンジンのメインクラス
@@ -120,7 +126,7 @@ export class AnalysisEngine {
   /**
    * 総合スコアを計算（重み付き平均、Gemini結果も考慮）
    */
-  private calculateOverallScore(evaluations: any[], geminiAnalysis?: GeminiAnalysisResponse): number {
+  private calculateOverallScore(evaluations: EvaluationResult[], geminiAnalysis?: GeminiAnalysisResponse): number {
     if (evaluations.length === 0) return 0
 
     // 重要度による重み付け
@@ -308,7 +314,7 @@ export class AnalysisReporter {
     const improvements = this.generateImprovements(result)
     const categoryScores = this.getCategoryScores(result)
     
-    let report = `
+    const report = `
 # LLMO分析レポート
 
 ## 基本情報
