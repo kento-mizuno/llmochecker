@@ -9,10 +9,17 @@ export default defineConfig({
     setupFiles: ['./src/__tests__/setup.ts'],
     globals: true,
     css: true,
+    exclude: [
+      '**/node_modules/**',
+      '**/e2e/**',
+      '**/*.e2e.{test,spec}.{js,ts}',
+      '**/playwright.config.ts'
+    ],
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
+        'e2e/',
         'src/__tests__/',
         '**/*.d.ts',
         '**/*.config.{js,ts}',
