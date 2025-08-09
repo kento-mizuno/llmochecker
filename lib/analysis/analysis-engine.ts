@@ -2,7 +2,8 @@ import { UrlValidator } from '@/lib/utils/url-validator'
 import { WebCrawler } from './web-crawler'
 import { HtmlParser } from './html-parser'
 import { EvaluationEngine } from './evaluation-engine'
-import { AnalysisResult, CrawlOptions } from '@/types/analysis'
+import { GeminiAnalyzer } from './gemini-analyzer'
+import { AnalysisResult, CrawlOptions, GeminiAnalysisRequest, GeminiAnalysisResponse } from '@/types/analysis'
 
 /**
  * URL分析・評価エンジンのメインクラス
@@ -10,9 +11,18 @@ import { AnalysisResult, CrawlOptions } from '@/types/analysis'
  */
 export class AnalysisEngine {
   private crawler: WebCrawler
+  private geminiAnalyzer?: GeminiAnalyzer
   
-  constructor() {
+  constructor(geminiApiKey?: string) {
     this.crawler = new WebCrawler()
+    
+    // Gemini APIキーが提供された場合のみGeminiAnalyzerを初期化
+    if (geminiApiKey) {
+      this.geminiAnalyzer = new GeminiAnalyzer({
+        apiKey: geminiApiKey,
+        model: 'gemini-2.0-flash-exp'
+      })
+    }
   }
 
   /**
@@ -42,8 +52,8 @@ export class AnalysisEngine {
       const metadata = parser.extractMetadata()
       const contentAnalysis = parser.analyzeContent()
       
-      // 4. 18項目評価の実行
-      console.log('⚖️  評価エンジンを実行...')
+      // 4. 基本18項目評価の実行
+      console.log('⚖️  基本評価エンジンを実行...')
       const evaluations = EvaluationEngine.evaluateAll(
         metadata,
         contentAnalysis,
@@ -51,11 +61,35 @@ export class AnalysisEngine {
         crawlResult.html
       )
 
-      // 5. 総合スコア計算
-      const overallScore = this.calculateOverallScore(evaluations)
+      // 5. Gemini AI分析（利用可能な場合）
+      let geminiAnalysis: GeminiAnalysisResponse | undefined
+      if (this.geminiAnalyzer) {
+        console.log('🤖 Gemini AI分析を実行...')
+        try {
+          const geminiRequest: GeminiAnalysisRequest = {
+            url: normalizedUrl,
+            title: metadata.title,
+            description: metadata.description,
+            content: crawlResult.html,
+            metadata,
+            contentAnalysis,
+            technicalSignals: crawlResult.technicalSignals
+          }
+          
+          geminiAnalysis = await this.geminiAnalyzer.analyzeContent(geminiRequest)
+          console.log(`✨ AI分析完了 (${geminiAnalysis.processingTime}ms, 信頼度: ${geminiAnalysis.confidence}%)`)
+        } catch (error) {
+          console.warn('⚠️  Gemini分析をスキップ:', error)
+        }
+      } else {
+        console.log('ℹ️  Gemini分析はスキップ（APIキー未設定）')
+      }
+
+      // 6. 総合スコア計算（Gemini結果も考慮）
+      const overallScore = this.calculateOverallScore(evaluations, geminiAnalysis)
       const category = this.determineCategory(overallScore)
 
-      // 6. 結果をまとめる
+      // 7. 結果をまとめる
       const result: AnalysisResult = {
         url: normalizedUrl,
         timestamp: new Date(),
@@ -64,7 +98,8 @@ export class AnalysisEngine {
         contentAnalysis,
         evaluations,
         overallScore,
-        category
+        category,
+        geminiAnalysis // AI分析結果を追加
       }
 
       console.log('✅ 分析完了:', {
@@ -83,9 +118,9 @@ export class AnalysisEngine {
   }
 
   /**
-   * 総合スコアを計算（重み付き平均）
+   * 総合スコアを計算（重み付き平均、Gemini結果も考慮）
    */
-  private calculateOverallScore(evaluations: any[]): number {
+  private calculateOverallScore(evaluations: any[], geminiAnalysis?: GeminiAnalysisResponse): number {
     if (evaluations.length === 0) return 0
 
     // 重要度による重み付け
@@ -132,7 +167,33 @@ export class AnalysisEngine {
       totalWeight += weight
     })
 
-    return Math.round((weightedSum / totalWeight) * 100) / 100
+    let baseScore = weightedSum / totalWeight
+
+    // Gemini分析結果がある場合は補正を適用
+    if (geminiAnalysis) {
+      const eeAtAvg = (
+        geminiAnalysis.eeAtAnalysis.experience.score +
+        geminiAnalysis.eeAtAnalysis.expertise.score +
+        geminiAnalysis.eeAtAnalysis.authoritativeness.score +
+        geminiAnalysis.eeAtAnalysis.trustworthiness.score
+      ) / 4
+
+      const qualityAvg = (
+        geminiAnalysis.contentQualityAnalysis.clarity.score +
+        geminiAnalysis.contentQualityAnalysis.completeness.score +
+        geminiAnalysis.contentQualityAnalysis.accuracy.score +
+        geminiAnalysis.contentQualityAnalysis.uniqueness.score +
+        geminiAnalysis.contentQualityAnalysis.userIntent.score
+      ) / 5
+
+      // AI分析結果を20%の重みで補正
+      const aiScore = (eeAtAvg + qualityAvg) / 2
+      const confidenceWeight = geminiAnalysis.confidence / 100
+      
+      baseScore = (baseScore * 0.8) + (aiScore * 0.2 * confidenceWeight)
+    }
+
+    return Math.round(baseScore * 100) / 100
   }
 
   /**

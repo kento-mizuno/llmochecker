@@ -88,6 +88,7 @@ export interface AnalysisResult {
   evaluations: EvaluationResult[]
   overallScore: number
   category: 'A' | 'B' | 'C' | 'D' | 'F'
+  geminiAnalysis?: GeminiAnalysisResponse
 }
 
 export interface CrawlOptions {
@@ -98,4 +99,105 @@ export interface CrawlOptions {
     width: number
     height: number
   }
+}
+
+export interface GeminiAnalysisRequest {
+  url: string
+  title?: string
+  description?: string
+  content: string
+  metadata: MetaData
+  contentAnalysis: ContentAnalysis
+  technicalSignals: TechnicalSignals
+}
+
+export interface GeminiAnalysisResponse {
+  eeAtAnalysis: EEATAnalysis
+  contentQualityAnalysis: ContentQualityAnalysis
+  improvements: ImprovementSuggestion[]
+  confidence: number
+  processingTime: number
+}
+
+export interface EEATAnalysis {
+  experience: {
+    score: number
+    evidence: string[]
+    issues: string[]
+  }
+  expertise: {
+    score: number
+    evidence: string[]
+    issues: string[]
+  }
+  authoritativeness: {
+    score: number
+    evidence: string[]
+    issues: string[]
+  }
+  trustworthiness: {
+    score: number
+    evidence: string[]
+    issues: string[]
+  }
+  overall: {
+    score: number
+    assessment: string
+  }
+}
+
+export interface ContentQualityAnalysis {
+  clarity: {
+    score: number
+    assessment: string
+    issues: string[]
+  }
+  completeness: {
+    score: number
+    assessment: string
+    missingElements: string[]
+  }
+  accuracy: {
+    score: number
+    assessment: string
+    concerns: string[]
+  }
+  uniqueness: {
+    score: number
+    assessment: string
+    duplicateRisk: string[]
+  }
+  userIntent: {
+    score: number
+    matchedIntents: string[]
+    unmatchedNeeds: string[]
+  }
+}
+
+export interface ImprovementSuggestion {
+  category: 'critical' | 'important' | 'moderate' | 'low'
+  title: string
+  description: string
+  implementation: string
+  expectedImpact: string
+  priority: number
+  effort: 'low' | 'medium' | 'high'
+}
+
+export interface GeminiConfig {
+  apiKey: string
+  model: string
+  maxTokens?: number
+  temperature?: number
+  topP?: number
+  topK?: number
+}
+
+export interface PromptTemplate {
+  system: string
+  user: string
+  examples?: Array<{
+    input: string
+    output: string
+  }>
 }
