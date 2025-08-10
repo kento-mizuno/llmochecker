@@ -1,68 +1,44 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
-    
-    /* LLMO専用カラー */
-    --llmo-primary: 212 100% 47%;
-    --llmo-secondary: 280 100% 70%;
-    --llmo-success: 142 76% 36%;
-    --llmo-warning: 38 92% 50%;
-    --llmo-error: 0 84% 60%;
-    --llmo-gradient: linear-gradient(135deg, hsl(var(--llmo-primary)), hsl(var(--llmo-secondary)));
-  }
-
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-  }
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+  --color-primary: #0f172a;
+  --color-primary-foreground: #f8fafc;
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #0f172a;
+  
+  /* LLMO専用カラー */
+  --color-llmo-primary: #0ea5e9;
+  --color-llmo-secondary: #a855f7;
+  --color-llmo-success: #22c55e;
+  --color-llmo-warning: #f59e0b;
+  --color-llmo-error: #ef4444;
+  
+  --radius: 0.5rem;
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: theme(colors.border);
   }
+  
   body {
-    @apply bg-background text-foreground;
+    background-color: theme(colors.background);
+    color: theme(colors.foreground);
     font-family: var(--font-noto-sans-jp), var(--font-inter), system-ui, sans-serif;
   }
 }
@@ -70,26 +46,259 @@
 @layer components {
   /* LLMO専用スタイル */
   .llmo-gradient {
-    background: var(--llmo-gradient);
+    background: linear-gradient(135deg, theme(colors.llmo-primary), theme(colors.llmo-secondary));
+  }
+  
+  /* Hero Section - メインコンテナ */
+  .hero-main {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0f172a 0%, #1e40af 50%, #4338ca 100%);
+    color: white;
+  }
+  
+  /* Hero Section - 背景オーバーレイ */
+  .hero-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(147, 51, 234, 0.2), rgba(79, 70, 229, 0.2));
+    animation: pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  /* Hero Section - 浮遊オーブ */
+  .hero-floating-orb-1 {
+    position: absolute;
+    top: 0;
+    left: 25%;
+    width: 24rem;
+    height: 24rem;
+    background-color: #3b82f6;
+    border-radius: 50%;
+    mix-blend-mode: multiply;
+    filter: blur(3rem);
+    opacity: 0.3;
+    animation: bounce 6s infinite;
+  }
+  
+  .hero-floating-orb-2 {
+    position: absolute;
+    top: 0;
+    right: 25%;
+    width: 24rem;
+    height: 24rem;
+    background-color: #a855f7;
+    border-radius: 50%;
+    mix-blend-mode: multiply;
+    filter: blur(3rem);
+    opacity: 0.3;
+    animation: bounce 6s infinite;
+    animation-delay: 2s;
+  }
+  
+  .hero-floating-orb-3 {
+    position: absolute;
+    bottom: -2rem;
+    left: 50%;
+    width: 24rem;
+    height: 24rem;
+    background-color: #6366f1;
+    border-radius: 50%;
+    mix-blend-mode: multiply;
+    filter: blur(3rem);
+    opacity: 0.3;
+    animation: bounce 6s infinite;
+    animation-delay: 4s;
+  }
+  
+  /* Hero Section - グリッドパターン */
+  .hero-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+    opacity: 0.1;
+  }
+  
+  /* Hero Section - バッジ */
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border-radius: 9999px;
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    color: white;
+  }
+  
+  /* Hero Section - タイトルグラデーション */
+  .hero-title-gradient {
+    background: linear-gradient(45deg, #60a5fa, #a855f7, #fb92f7);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* Safari対応 */
+  @supports not (-webkit-background-clip: text) {
+    .hero-title-gradient {
+      color: #60a5fa;
+    }
+  }
+  
+  /* Hero Section - CTAボタン */
+  .hero-cta-button {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border-radius: 9999px;
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+    min-width: 15.625rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    border: none;
+  }
+  
+  .hero-cta-button:hover {
+    background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 15px 35px -5px rgba(37, 99, 235, 0.4);
+  }
+  
+  /* Hero Section - セカンダリボタン */
+  .hero-secondary-button {
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    font-size: 1.125rem;
+    padding: 1rem 2rem;
+    border-radius: 9999px;
+    min-width: 12.5rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+  
+  .hero-secondary-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Hero Section - 統計カード */
+  .hero-stats-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .hero-stats-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Hero Section - 統計数字 */
+  .hero-stats-number {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .hero-stats-card:hover .hero-stats-number {
+    transform: scale(1.1);
+  }
+  
+  .hero-stats-number.gradient-green-blue {
+    background: linear-gradient(45deg, #10b981, #3b82f6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  @supports not (-webkit-background-clip: text) {
+    .hero-stats-number.gradient-green-blue {
+      color: #10b981;
+    }
+  }
+  
+  .hero-stats-number.gradient-purple-pink {
+    background: linear-gradient(45deg, #8b5cf6, #ec4899);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  @supports not (-webkit-background-clip: text) {
+    .hero-stats-number.gradient-purple-pink {
+      color: #8b5cf6;
+    }
+  }
+  
+  .hero-stats-number.gradient-yellow-orange {
+    background: linear-gradient(45deg, #f59e0b, #f97316);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  @supports not (-webkit-background-clip: text) {
+    .hero-stats-number.gradient-yellow-orange {
+      color: #f59e0b;
+    }
   }
   
   .llmo-card {
-    @apply bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow;
+    background-color: theme(colors.card, #ffffff);
+    border: 1px solid theme(colors.border, #e2e8f0);
+    border-radius: theme(radius, 0.5rem);
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .llmo-card:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
   
   .llmo-score-ring {
-    @apply relative inline-flex items-center justify-center w-24 h-24;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 6rem;
+    height: 6rem;
   }
   
   .llmo-badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
   }
   
-  .llmo-badge-a { @apply bg-green-100 text-green-800; }
-  .llmo-badge-b { @apply bg-blue-100 text-blue-800; }
-  .llmo-badge-c { @apply bg-yellow-100 text-yellow-800; }
-  .llmo-badge-d { @apply bg-orange-100 text-orange-800; }
-  .llmo-badge-f { @apply bg-red-100 text-red-800; }
+  .llmo-badge-a { background-color: rgb(220 252 231); color: rgb(22 101 52); }
+  .llmo-badge-b { background-color: rgb(219 234 254); color: rgb(30 64 175); }
+  .llmo-badge-c { background-color: rgb(254 249 195); color: rgb(133 77 14); }
+  .llmo-badge-d { background-color: rgb(255 237 213); color: rgb(154 52 18); }
+  .llmo-badge-f { background-color: rgb(254 226 226); color: rgb(153 27 27); }
 }
 
 @layer utilities {
@@ -104,7 +313,7 @@
   
   /* テキストグラデーション */
   .text-gradient {
-    background: var(--llmo-gradient);
+    background: linear-gradient(135deg, hsl(212 100% 47%), hsl(280 100% 70%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -113,7 +322,7 @@
   /* スクロールバーのスタイリング */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--muted));
+    scrollbar-color: theme(colors.muted-foreground, #64748b) theme(colors.muted, #f1f5f9);
   }
   
   .scrollbar-thin::-webkit-scrollbar {
@@ -121,11 +330,11 @@
   }
   
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
+    background: theme(colors.muted, #f1f5f9);
   }
   
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted-foreground));
+    background-color: theme(colors.muted-foreground, #64748b);
     border-radius: 3px;
   }
 }
@@ -153,6 +362,7 @@
 }
 
 /* フォーカスリング */
-.focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px theme(colors.ring, #0f172a), 0 0 0 4px color-mix(in srgb, theme(colors.ring, #0f172a) 20%, transparent);
 }

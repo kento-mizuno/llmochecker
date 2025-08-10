@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     // URL形式検証
-    const urlValidation = UrlValidator.validateUrl(url)
+    const urlValidation = UrlValidator.validate(url)
     if (!urlValidation.isValid) {
       return NextResponse.json(
         { 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       { 
         error: '診断の開始に失敗しました',
         code: 'INTERNAL_ERROR',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
       },
       { status: 500 }
     )

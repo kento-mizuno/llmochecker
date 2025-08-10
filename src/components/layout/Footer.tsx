@@ -17,9 +17,7 @@ export function Footer() {
               <span className="font-bold text-xl text-gradient">LLMO診断</span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4">
-              AI検索時代の新しいSEO対策。
-              あなたのWebサイトがChatGPTやClaude、
-              Geminiでどの程度表示されるかを無料で診断します。
+              AI検索時代の新しいSEO対策診断ツール
             </p>
             <div className="flex space-x-4">
               <Link 
@@ -49,12 +47,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href="/diagnosis" className="text-muted-foreground hover:text-foreground transition-colors focus-ring rounded px-1">
-                  無料LLMO診断
-                </Link>
-              </li>
-              <li>
-                <Link href="/examples" className="text-muted-foreground hover:text-foreground transition-colors focus-ring rounded px-1">
-                  診断事例
+                  LLMO診断
                 </Link>
               </li>
               <li>

@@ -16,51 +16,53 @@ const config: Config = {
     },
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        // CSS変数を参照（v4形式では自動でtheme()関数が利用可能）
+        border: 'theme(colors.border)',
+        input: 'theme(colors.input)',
+        ring: 'theme(colors.ring)',
+        background: 'theme(colors.background)',
+        foreground: 'theme(colors.foreground)',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: 'theme(colors.primary)',
+          foreground: 'theme(colors.primary-foreground)',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: 'theme(colors.secondary)',
+          foreground: 'theme(colors.secondary-foreground)',
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          DEFAULT: 'theme(colors.destructive)',
+          foreground: 'theme(colors.destructive-foreground)',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: 'theme(colors.muted)',
+          foreground: 'theme(colors.muted-foreground)',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: 'theme(colors.accent)',
+          foreground: 'theme(colors.accent-foreground)',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'theme(colors.popover)',
+          foreground: 'theme(colors.popover-foreground)',
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+          DEFAULT: 'theme(colors.card)',
+          foreground: 'theme(colors.card-foreground)',
         },
+        // LLMO専用カラー（@themeブロックから参照）
         llmo: {
-          primary: 'hsl(var(--llmo-primary))',
-          secondary: 'hsl(var(--llmo-secondary))',
-          success: 'hsl(var(--llmo-success))',
-          warning: 'hsl(var(--llmo-warning))',
-          error: 'hsl(var(--llmo-error))',
+          primary: 'theme(colors.llmo.primary)',
+          secondary: 'theme(colors.llmo.secondary)',
+          success: 'theme(colors.llmo.success)',
+          warning: 'theme(colors.llmo.warning)',
+          error: 'theme(colors.llmo.error)',
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: 'theme(radius)',
+        md: 'calc(theme(radius) - 2px)',
+        sm: 'calc(theme(radius) - 4px)',
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
@@ -68,7 +70,7 @@ const config: Config = {
       },
       backgroundImage: {
         'grid-pattern': 
-          'linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px)',
+          'linear-gradient(to right, theme(colors.border) 1px, transparent 1px), linear-gradient(to bottom, theme(colors.border) 1px, transparent 1px)',
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',

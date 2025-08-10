@@ -142,13 +142,16 @@ export class IntegratedDiagnosis {
     if (!this.diagnosisService) return null
 
     try {
-      // Supabase から進捗情報を取得（簡略化）
+      // Supabase から進捗情報を取得
+      const progress = await this.diagnosisService.getProgress(progressId)
+      if (!progress) return null
+      
       return {
         id: progressId,
-        status: 'analyzing',
-        currentStep: 'URL検証',
-        percentage: 50,
-        estimatedCompletion: new Date(Date.now() + 60000)
+        status: progress.status,
+        currentStep: progress.current_step,
+        percentage: progress.progress_percentage,
+        estimatedCompletion: new Date(progress.estimated_completion)
       }
     } catch (error) {
       console.error('進捗取得エラー:', error)

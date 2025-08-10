@@ -285,6 +285,32 @@ export class DiagnosisService {
   }
 
   /**
+   * 進捗状態を取得
+   */
+  async getProgress(progressId: string): Promise<ProgressRow | null> {
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client が初期化されていません')
+    }
+
+    try {
+      const { data: progress, error } = await supabaseAdmin
+        .from('diagnosis_progress')
+        .select('*')
+        .eq('id', progressId)
+        .single()
+
+      if (error || !progress) {
+        return null
+      }
+
+      return progress
+    } catch (error) {
+      console.error('進捗取得エラー:', error)
+      return null
+    }
+  }
+
+  /**
    * データベース形式からAnalysisResult形式に変換
    */
   private convertToAnalysisResult(

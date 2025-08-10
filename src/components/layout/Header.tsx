@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, Zap } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -42,19 +42,13 @@ export function Header() {
             >
               LLMOとは
             </Link>
-            <Link 
-              href="/examples" 
-              className="text-foreground/80 hover:text-foreground transition-colors focus-ring rounded-sm px-2 py-1"
-            >
-              診断例
-            </Link>
           </nav>
 
           {/* CTA ボタン */}
           <div className="hidden md:flex items-center space-x-4">
             <Button asChild className="llmo-gradient text-white hover:opacity-90">
               <Link href="/diagnosis">
-                無料診断を開始
+                診断を開始
               </Link>
             </Button>
           </div>
@@ -94,17 +88,10 @@ export function Header() {
               >
                 LLMOとは
               </Link>
-              <Link 
-                href="/examples" 
-                className="text-foreground/80 hover:text-foreground transition-colors focus-ring rounded-sm px-2 py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                診断例
-              </Link>
               <div className="pt-4 border-t">
                 <Button asChild className="w-full llmo-gradient text-white hover:opacity-90">
                   <Link href="/diagnosis" onClick={() => setIsMenuOpen(false)}>
-                    無料診断を開始
+                    診断を開始
                   </Link>
                 </Button>
               </div>

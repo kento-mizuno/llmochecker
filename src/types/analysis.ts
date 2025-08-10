@@ -115,6 +115,8 @@ export interface GeminiAnalysisResponse {
   eeAtAnalysis: EEATAnalysis
   contentQualityAnalysis: ContentQualityAnalysis
   improvements: ImprovementSuggestion[]
+  strengths: string[]
+  weaknesses: string[]
   confidence: number
   processingTime: number
 }

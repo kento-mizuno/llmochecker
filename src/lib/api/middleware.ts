@@ -136,7 +136,7 @@ export function withErrorHandling<T extends any[], R>(
         createErrorResponse(
           'サーバー内部エラーが発生しました',
           'INTERNAL_ERROR',
-          process.env.NODE_ENV === 'development' ? error.message : undefined
+          process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
         ),
         { status: 500 }
       )

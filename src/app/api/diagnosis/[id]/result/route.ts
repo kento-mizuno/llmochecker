@@ -7,10 +7,10 @@ import { IntegratedDiagnosis } from '../../../../../../lib/diagnosis/integrated-
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const { searchParams } = new URL(request.url)
     const format = searchParams.get('format') || 'json' // 'json' | 'html'
 
@@ -55,19 +55,46 @@ export async function GET(
 
       case 'json':
       default:
+        // 実際の診断結果を返す
         const jsonResult = {
           id: result.diagnosisId,
           fromCache: result.fromCache,
           summary: {
             url: result.result.url,
-            timestamp: result.result.timestamp,
+            timestamp: result.result.timestamp.toISOString(),
             overallScore: result.result.overallScore,
             category: result.result.category
           },
           technicalSignals: result.result.technicalSignals,
           contentAnalysis: result.result.contentAnalysis,
-          evaluations: result.result.evaluations,
-          geminiAnalysis: result.result.geminiAnalysis,
+          evaluations: result.result.evaluations.map(evaluation => ({
+            criteriaId: evaluation.criteriaId,
+            score: evaluation.score,
+            maxScore: evaluation.maxScore,
+            feedback: evaluation.status === 'excellent' ? '優秀な評価です' :
+                     evaluation.status === 'good' ? '良好な評価です' :
+                     evaluation.status === 'fair' ? '改善の余地があります' :
+                     '要改善項目です',
+            suggestions: evaluation.suggestions || []
+          })),
+          geminiAnalysis: result.result.geminiAnalysis ? {
+            eeatScore: (
+              result.result.geminiAnalysis.eeAtAnalysis.experience.score +
+              result.result.geminiAnalysis.eeAtAnalysis.expertise.score +
+              result.result.geminiAnalysis.eeAtAnalysis.authoritativeness.score +
+              result.result.geminiAnalysis.eeAtAnalysis.trustworthiness.score
+            ) / 4,
+            qualityScore: (
+              result.result.geminiAnalysis.contentQualityAnalysis.clarity.score +
+              result.result.geminiAnalysis.contentQualityAnalysis.completeness.score +
+              result.result.geminiAnalysis.contentQualityAnalysis.accuracy.score +
+              result.result.geminiAnalysis.contentQualityAnalysis.uniqueness.score +
+              result.result.geminiAnalysis.contentQualityAnalysis.userIntent.score
+            ) / 5,
+            suggestions: result.result.geminiAnalysis.improvements || [],
+            strengths: result.result.geminiAnalysis.strengths || [],
+            weaknesses: result.result.geminiAnalysis.weaknesses || []
+          } : undefined,
           reports: {
             json: JSON.parse(result.reports.json),
             htmlUrl: `/api/diagnosis/${id}/result?format=html`
@@ -88,7 +115,7 @@ export async function GET(
       { 
         error: '診断結果の取得に失敗しました',
         code: 'INTERNAL_ERROR',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
       },
       { status: 500 }
     )
@@ -101,7 +128,7 @@ export async function GET(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   return NextResponse.json(
     { error: 'この機能は現在実装されていません', code: 'NOT_IMPLEMENTED' },
@@ -115,7 +142,7 @@ export async function DELETE(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   return NextResponse.json(
     { error: 'この機能は現在実装されていません', code: 'NOT_IMPLEMENTED' },

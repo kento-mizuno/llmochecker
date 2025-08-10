@@ -1,6 +1,6 @@
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react'
-import { Button } from './Button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './Card'
+import { Button } from './button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card'
 import { cn } from '@/lib/utils'
 
 interface ErrorDisplayProps {

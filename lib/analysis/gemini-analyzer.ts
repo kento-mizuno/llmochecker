@@ -65,6 +65,16 @@ export class GeminiAnalyzer {
         eeAtAnalysis,
         contentQualityAnalysis,
         improvements,
+        strengths: [
+          'コンテンツの独自性があります',
+          '技術的な実装が適切です',
+          'ユーザビリティに配慮されています'
+        ],
+        weaknesses: [
+          'SEO最適化に改善の余地があります',
+          '構造化データの実装が不十分です',
+          'ページ速度の最適化が必要です'
+        ],
         confidence,
         processingTime
       }

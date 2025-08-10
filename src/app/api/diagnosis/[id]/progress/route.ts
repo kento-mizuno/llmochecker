@@ -7,10 +7,10 @@ import { IntegratedDiagnosis } from '../../../../../../lib/diagnosis/integrated-
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     // IDの検証
     if (!id || typeof id !== 'string') {
@@ -34,14 +34,14 @@ export async function GET(
       )
     }
 
-    // 進捗情報を整形して返す
-    const response = {
-      id: progress.id,
-      status: progress.status, // 'initializing' | 'analyzing' | 'processing' | 'completed' | 'error'
-      currentStep: progress.currentStep,
-      percentage: progress.percentage,
-      estimatedCompletion: progress.estimatedCompletion,
-      message: getProgressMessage(progress.status, progress.currentStep)
+    // 進捗情報を整形して返す (Zustand storeの型に合わせる)
+    const response: any = {
+      stage: mapStatusToStage(progress.status),
+      progress: progress.percentage,
+      message: getProgressMessage(progress.status, progress.currentStep),
+      estimatedTimeRemaining: progress.estimatedCompletion 
+        ? Math.max(0, (progress.estimatedCompletion.getTime() - Date.now()) / 1000)
+        : null
     }
 
     // 完了時は結果取得URLも含める
@@ -51,10 +51,7 @@ export async function GET(
 
     // エラー時はエラー情報も含める
     if (progress.status === 'error') {
-      response.error = {
-        message: '診断中にエラーが発生しました',
-        code: 'DIAGNOSIS_ERROR'
-      }
+      response.error = '診断中にエラーが発生しました'
     }
 
     return NextResponse.json(response)
@@ -66,7 +63,7 @@ export async function GET(
       { 
         error: '進捗情報の取得に失敗しました',
         code: 'INTERNAL_ERROR',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
       },
       { status: 500 }
     )
@@ -77,7 +74,7 @@ export async function GET(
  * 進捗状況に応じたメッセージを生成
  */
 function getProgressMessage(status: string, currentStep: string): string {
-  const messages = {
+  const messages: Record<string, string> = {
     initializing: '診断を初期化しています...',
     analyzing: `${currentStep}を実行中...`,
     processing: '結果を処理しています...',
@@ -89,18 +86,34 @@ function getProgressMessage(status: string, currentStep: string): string {
 }
 
 /**
+ * API のstatus を Zustand store のstage にマップ
+ */
+function mapStatusToStage(status: string): string {
+  const mapping: Record<string, string> = {
+    'initializing': 'initializing',
+    'analyzing': 'analyzing_content',
+    'processing': 'saving_results',
+    'completed': 'completed',
+    'error': 'error'
+  }
+  
+  return mapping[status] || 'initializing'
+}
+
+/**
  * WebSocket接続用のエンドポイント情報（将来の実装用）
  */
 export async function OPTIONS(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   return NextResponse.json({
     methods: ['GET'],
     description: '診断進捗をリアルタイムで取得',
     websocket: {
       available: false, // 将来実装予定
-      url: `/ws/diagnosis/${params.id}/progress`
+      url: `/ws/diagnosis/${id}/progress`
     },
     polling: {
       recommended_interval: 2000, // 2秒間隔
